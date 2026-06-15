@@ -13,6 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - /docs/data-mutations.md
 - /docs/auth.md
 - /docs/server-components.md
+- /docs/routing.md
 
 
 ## Commands
