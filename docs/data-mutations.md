@@ -34,6 +34,15 @@ export async function deleteWorkout(userId: string, workoutId: number) {
     .delete(workouts)
     .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)));
 }
+
+export async function updateWorkout(userId: string, workoutId: number, name: string, startedAt: Date) {
+  const [updated] = await db
+    .update(workouts)
+    .set({ name, startedAt, updatedAt: new Date() })
+    .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)))
+    .returning();
+  return updated ?? null;
+}
 ```
 
 **Always scope writes to the authenticated user.** Every insert must include `userId`. Every update or delete must filter by both `id` and `userId` to prevent users from mutating another user's data.
@@ -129,6 +138,29 @@ export async function deleteWorkoutAction(params: z.infer<typeof DeleteWorkoutSc
 ```
 
 Use `safeParse` (not `parse`) so validation errors are handled gracefully rather than throwing uncontrolled Zod errors.
+
+For **update** actions, always check whether the data helper returned a result and throw if the record wasn't found (either it doesn't exist or belongs to another user):
+
+```ts
+const UpdateWorkoutSchema = z.object({
+  workoutId: z.number().int().positive(),
+  name: z.string().min(1).max(100),
+  startedAt: z.coerce.date(),
+});
+
+export async function updateWorkoutAction(params: z.infer<typeof UpdateWorkoutSchema>) {
+  const parsed = UpdateWorkoutSchema.safeParse(params);
+  if (!parsed.success) throw new Error("Invalid input");
+
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthenticated");
+
+  const workout = await updateWorkout(userId, parsed.data.workoutId, parsed.data.name, parsed.data.startedAt);
+  if (!workout) throw new Error("Workout not found");
+
+  return { dateStr: workout.startedAt.toISOString().split("T")[0] };
+}
+```
 
 ---
 
