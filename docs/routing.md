@@ -16,10 +16,10 @@ All application routes are nested under `/dashboard`. There are no top-level fea
 
 ## Route Protection
 
-All `/dashboard` routes are protected via **Next.js middleware**. Do not add per-page auth checks as a substitute — middleware is the single enforcement point.
+All `/dashboard` routes are protected via **Next.js proxy** (formerly called middleware). Do not add per-page auth checks as a substitute — proxy is the single enforcement point.
 
 ```tsx
-// src/middleware.ts
+// src/proxy.ts
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)'])
@@ -37,7 +37,7 @@ Unauthenticated users hitting any `/dashboard` route are automatically redirecte
 
 ## Key Principles
 
-- **Middleware is the gatekeeper**: Route protection lives in `src/middleware.ts`, not in individual page components
+- **Proxy is the gatekeeper**: Route protection lives in `src/proxy.ts`, not in individual page components
 - **All features under /dashboard**: No protected routes exist outside of `/dashboard`
 - **Public routes are explicit exceptions**: Only auth pages (`/sign-in`, `/sign-up`) and static assets are public
 
