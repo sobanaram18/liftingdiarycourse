@@ -53,7 +53,6 @@ export function WorkoutList({ initialDate, initialWorkouts, onDateChange }: Work
             mode="single"
             selected={date}
             onSelect={handleDateSelect}
-            initialFocus
           />
         </PopoverContent>
       </Popover>
