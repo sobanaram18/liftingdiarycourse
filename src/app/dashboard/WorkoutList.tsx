@@ -28,6 +28,7 @@ function formatDuration(startedAt: Date, completedAt: Date | null) {
 export function WorkoutList({ initialDate, initialWorkouts, onDateChange }: WorkoutListProps) {
   const [date, setDate] = useState<Date>(initialDate);
   const [workouts] = useState<WorkoutSummary[]>(initialWorkouts);
+  const [open, setOpen] = useState(false);
 
   const formattedDate = format(date, "do MMM yyyy");
 
@@ -35,11 +36,12 @@ export function WorkoutList({ initialDate, initialWorkouts, onDateChange }: Work
     if (!d) return;
     setDate(d);
     onDateChange(d);
+    setOpen(false);
   }
 
   return (
     <>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -59,9 +61,14 @@ export function WorkoutList({ initialDate, initialWorkouts, onDateChange }: Work
       </Popover>
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
-          Workouts — {formattedDate}
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+            Workouts — {formattedDate}
+          </h2>
+          <Button asChild size="sm">
+            <Link href="/dashboard/workout/new">Log New Workout</Link>
+          </Button>
+        </div>
 
         {workouts.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 py-16 text-center">
