@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { format, differenceInMinutes } from "date-fns";
 import { CalendarIcon, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -74,25 +75,27 @@ export function WorkoutList({ initialDate, initialWorkouts, onDateChange }: Work
             {workouts.map((workout) => {
               const duration = formatDuration(workout.startedAt, workout.completedAt);
               return (
-                <li
-                  key={workout.id}
-                  className="flex flex-col gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-black dark:text-zinc-50">
-                      {workout.name}
-                    </span>
-                    {duration && (
-                      <span className="text-xs text-zinc-400 dark:text-zinc-500">
-                        {duration}
+                <li key={workout.id}>
+                  <Link
+                    href={`/dashboard/workout/${workout.id}`}
+                    className="flex flex-col gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-black dark:text-zinc-50">
+                        {workout.name}
                       </span>
+                      {duration && (
+                        <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                          {duration}
+                        </span>
+                      )}
+                    </div>
+                    {workout.exercises.length > 0 && (
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                        {workout.exercises.join(" · ")}
+                      </p>
                     )}
-                  </div>
-                  {workout.exercises.length > 0 && (
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      {workout.exercises.join(" · ")}
-                    </p>
-                  )}
+                  </Link>
                 </li>
               );
             })}
